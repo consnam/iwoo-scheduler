@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이우학교 2026 1학기 고3 시간표 플래너</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-light: #818CF8;
+    --primary-bg: #EEF2FF;
+    --success: #059669;
+    --success-bg: #D1FAE5;
+    --warning: #D97706;
+    --warning-bg: #FEF3C7;
+    --danger: #DC2626;
+    --danger-bg: #FEE2E2;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-500: #6B7280;
+    --gray-700: #374151;
+    --gray-900: #111827;
+    --sport: #F59E0B;
+    --sport-bg: #FFFBEB;
+    --free: #94A3B8;
+    --free-bg: #F1F5F9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: var(--gray-900);
+  }
+
+  .app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  header {
+    text-align: center;
+    padding: 30px 20px 20px;
+    color: white;
+  }
+
+  header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  header p {
+    font-size: 15px;
+    opacity: 0.9;
+  }
+
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title .icon {
+    font-size: 22px;
+  }
+
+  /* Step indicator */
+  .steps {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    transition: all 0.3s;
+  }
+
+  .step.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .step.done {
+    background: rgba(255,255,255,0.4);
+    color: white;
+  }
+
+  .step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.3);
+  }
+
+  .step.active .step-num {
+    background: var(--primary);
+    color: white;
+  }
+
+  .step.done .step-num {
+    background: var(--success);
+    color: white;
+  }
+
+  /* Course selection */
+  .set-group {
+    margin-bottom: 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .set-header {
+    padding: 10px 16px;
+    background: var(--gray-50);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-500);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .set-header .time-info {
+    font-weight: 400;
+    font-size: 12px;
+  }
+
+  .course-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .course-chip {
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 2px solid var(--gray-200);
+    background: white;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .course-chip:hover {
+    border-color: var(--primary-light);
+    background: var(--primary-bg);
+  }
+
+  .course-chip.selected {
+    border-color: var(--primary);
+    background: var(--primary-bg);
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .course-chip.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    border-color: var(--gray-200);
+    background: var(--gray-100);
+  }
+
+  .course-chip.blocked {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: var(--danger);
+    background: var(--danger-bg);
+    text-decoration: line-through;
+  }
+
+  .course-chip.blocked .blocked-reason {
+    display: inline;
+    font-size: 10px;
+    margin-left: 4px;
+    color: var(--danger);
+    font-weight: 700;
+  }
+
+  .course-chip:not(.blocked) .blocked-reason {
+    display: none;
+  }
+
+  .course-chip .credit-badge {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-500);
+  }
+
+  .course-chip.selected .credit-badge {
+    color: var(--primary);
+  }
+
+  /* Credit counter */
+  .credit-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  .credit-number {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+  }
+
+  .credit-label {
+    font-size: 13px;
+    color: var(--gray-500);
+  }
+
+  .credit-progress {
+    flex: 1;
+    height: 10px;
+    background: var(--gray-200);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .credit-progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.4s ease, background 0.3s;
+  }
+
+  .credit-status {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Generate button */
+  .generate-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    color: white;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+
+  .generate-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+  }
+
+  .generate-btn:disabled {
+    background: var(--gray-300);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* Timetable */
+  .timetable-container {
+    overflow-x: auto;
+  }
+
+  .timetable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 600px;
+  }
+
+  .timetable th {
+    padding: 10px 8px;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .timetable th:first-child {
+    width: 60px;
+    border-radius: 8px 0 0 0;
+  }
+
+  .timetable th:last-child {
+    border-radius: 0 8px 0 0;
+  }
+
+  .timetable td {
+    padding: 10px 6px;
+    text-align: center;
+    border: 1px solid var(--gray-200);
+    font-weight: 500;
+    vertical-align: middle;
+    line-height: 1.4;
+  }
+
+  .timetable .period-cell {
+    background: var(--gray-50);
+    font-weight: 700;
+    color: var(--gray-700);
+    font-size: 12px;
+    width: 60px;
+  }
+
+  .timetable .lunch-row td {
+    background: var(--warning-bg);
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .cell-fixed {
+    background: var(--gray-50);
+    color: var(--gray-500);
+  }
+
+  .cell-selected {
+    background: var(--primary-bg);
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .cell-sport {
+    background: var(--sport-bg);
+    color: var(--sport);
+    font-weight: 700;
+  }
+
+  .cell-free {
+    background: var(--free-bg);
+    color: var(--free);
+    font-style: italic;
+  }
+
+  .cell-special {
+    background: #FDF4FF;
+    color: #9333EA;
+    font-weight: 600;
+  }
+
+  /* Result navigation */
+  .result-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .result-nav button {
+    padding: 8px 16px;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    background: white;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .result-nav button:hover {
+    background: var(--primary-bg);
+  }
+
+  .result-nav button:disabled {
+    border-color: var(--gray-300);
+    color: var(--gray-300);
+    cursor: not-allowed;
+  }
+
+  .result-count {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-700);
+  }
+
+  /* Result detail */
+  .result-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .result-tag {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .tag-course {
+    background: var(--primary-bg);
+    color: var(--primary);
+  }
+
+  .tag-free {
+    background: var(--free-bg);
+    color: var(--free);
+  }
+
+  .tag-credit {
+    background: var(--success-bg);
+    color: var(--success);
+  }
+
+  /* Alert */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .alert-warning {
+    background: var(--warning-bg);
+    color: #92400E;
+  }
+
+  .alert-danger {
+    background: var(--danger-bg);
+    color: #991B1B;
+  }
+
+  .alert-success {
+    background: var(--success-bg);
+    color: #065F46;
+  }
+
+  .alert-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* Info box */
+  .info-box {
+    padding: 14px 18px;
+    background: var(--gray-50);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--gray-500);
+    line-height: 1.6;
+    margin-top: 16px;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .app-container { padding: 8px; }
+    header { padding: 20px 12px 16px; }
+    header h1 { font-size: 20px; }
+    header p { font-size: 13px; }
+    .card { padding: 14px; }
+    .card-title { font-size: 16px; }
+    .course-options { gap: 6px; }
+    .course-chip { padding: 6px 10px; font-size: 12px; }
+    .credit-bar { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+    .credit-number { font-size: 28px; }
+    .steps { flex-wrap: wrap; gap: 6px; }
+    .step { padding: 6px 10px; font-size: 12px; }
+
+    .timetable { min-width: unset; width: 100%; font-size: 11px; }
+    .timetable th { padding: 8px 2px; font-size: 12px; }
+    .timetable td { padding: 8px 2px; font-size: 11px; word-break: keep-all; }
+    .timetable .period-cell { width: 36px; font-size: 10px; }
+    .timetable-container { overflow-x: hidden; }
+
+    .result-detail { gap: 6px; }
+    .result-tag { padding: 4px 8px; font-size: 11px; }
+    .save-btn { font-size: 13px; padding: 10px 16px; }
+    .info-box { font-size: 12px; }
+    .header-actions { flex-wrap: wrap; gap: 8px; }
+  }
+
+  /* Reset button */
+  .reset-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--danger);
+    border-radius: 8px;
+    background: white;
+    color: var(--danger);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { background: var(--danger-bg); }
+
+  .header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .save-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, #059669, #10B981);
+    color: white;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(5,150,105,0.3);
+  }
+  .save-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(5,150,105,0.4); }
+  .save-btn:disabled { background: var(--gray-300); cursor: wait; box-shadow: none; }
+</style>
+</head>
+<body>
+
+<div class="app-container" id="app">
+  <header>
+    <h1>📚 이우학교 고3 시간표 플래너</h1>
+    <p>2026년 1학기 · 원하는 과목을 선택하면 시간표를 만들어 드려요</p>
+    <div class="steps" style="margin-top:16px">
+      <div class="step active" id="step1"><span class="step-num">1</span> 과목 선택</div>
+      <div class="step" id="step2"><span class="step-num">2</span> 시간표 생성</div>
+      <div class="step" id="step3"><span class="step-num">3</span> 결과 확인</div>
+    </div>
+  </header>
+
+  <!-- Step 1: Course Selection -->
+  <div id="selection-panel">
+    <div class="card">
+      <div class="header-actions">
+        <div class="card-title"><span class="icon">🎯</span> 듣고 싶은 과목을 선택하세요</div>
+        <button class="reset-btn" onclick="resetAll()">초기화</button>
+      </div>
+
+      <div class="credit-bar">
+        <div>
+          <div class="credit-number" id="credit-count">0</div>
+          <div class="credit-label">선택 학점</div>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span class="credit-label">최소 28학점</span>
+            <span class="credit-status" id="credit-status">과목을 선택해 주세요</span>
+          </div>
+          <div class="credit-progress">
+            <div class="credit-progress-fill" id="credit-fill" style="width:0%;background:var(--gray-300)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="set-containers"></div>
+
+      <div id="alert-area"></div>
+
+      <button class="generate-btn" id="generate-btn" disabled onclick="generateTimetables()">
+        시간표 만들기
+      </button>
+
+      <div class="info-box">
+        💡 <strong>사용법:</strong> 각 시간대(세트)에서 원하는 과목을 하나씩 클릭하세요.
+        같은 시간대의 과목끼리는 하나만 선택할 수 있어요.
+        같은 과목(예: 확률과통계A/B/C)은 하나만 선택 가능하며, 하나를 선택하면 다른 세트의 같은 과목은 자동으로 <strong style="color:var(--danger)">취소선</strong> 처리됩니다.
+        선택한 과목을 다시 클릭하면 취소됩니다.
+        학점이 28 이상이면 시간표를 생성할 수 있어요.
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Results -->
+  <div id="result-panel" style="display:none">
+    <div class="card">
+      <div class="header-actions">
+        <div class="card-title"><span class="icon">📋</span> 시간표 결과</div>
+        <button class="reset-btn" onclick="backToSelection()">← 과목 다시 선택</button>
+      </div>
+
+      <div id="result-alert-area"></div>
+      <div class="result-nav" id="result-nav"></div>
+      <div id="result-tags"></div>
+      <div class="timetable-container" id="timetable-display"></div>
+      <div style="margin-top:16px; text-align:center">
+        <button class="save-btn" id="save-btn" onclick="saveAsImage()">📷 시간표 이미지로 저장</button>
+      </div>
+      <div class="info-box" style="margin-top:16px">
+        💡 스포츠생활(1학점)은 한 시간대만 사용하므로 나머지 시간대에 공강이 생길 수 있어요.
+        공강 시간 자습 가능 여부는 학교에 확인해 주세요.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA: 이우학교 2026 1학기 고3 시간표 세트 구조
+// ============================================================
+
+const SETS = [
+  {
+    id: "Set1",
+    label: "세트 1",
+    slots: ["화1-2", "목1-2"],
+    courses: [
+      { name: "확률과통계A", displayName: "확률과통계A", shortName: "확률과통계", tinyName: "확통", group: "확률과통계", credits: 4, slots: ["화1-2", "목1-2"] },
+      { name: "독서D", displayName: "독서D", shortName: "독서", tinyName: "독서", group: "독서", credits: 4, slots: ["화1-2", "목1-2"] },
+      { name: "미술이론", displayName: "미술이론", shortName: "미술이론", tinyName: "미술이론", group: null, credits: 4, slots: ["화1-2", "목1-2"] },
+      { name: "스포츠생활C", displayName: "스포츠생활C", shortName: "스포츠생활", tinyName: "스포츠", group: "스포츠생활", credits: 1, slots: ["화1-2"] },
+    ]
+  },
+  {
+    id: "Set2",
+    label: "세트 2",
+    slots: ["화3-4", "수1-2"],
+    courses: [
+      { name: "독서A", displayName: "독서A", shortName: "독서", tinyName: "독서", group: "독서", credits: 4, slots: ["화3-4", "수1-2"] },
+      { name: "영어2B", displayName: "영어ⅡB", shortName: "영어Ⅱ", tinyName: "영어Ⅱ", group: "영어Ⅱ", credits: 4, slots: ["화3-4", "수1-2"] },
+      { name: "심화영어독해B", displayName: "심화영어독해B", shortName: "심화영어독해", tinyName: "심영독", group: "심화영어독해", credits: 4, slots: ["화3-4", "수1-2"] },
+      { name: "과학과제연구", displayName: "과학과제연구", shortName: "과학과제연구", tinyName: "과과연", group: null, credits: 4, slots: ["화3-4", "수1-2"] },
+      { name: "스포츠생활B", displayName: "스포츠생활B", shortName: "스포츠생활", tinyName: "스포츠", group: "스포츠생활", credits: 1, slots: ["수1-2"] },
+    ]
+  },
+  {
+    id: "Set3",
+    label: "세트 3",
+    slots: ["화5-6", "금5-6"],
+    courses: [
+      { name: "세계사", displayName: "세계사", shortName: "세계사", tinyName: "세계사", group: null, credits: 4, slots: ["화5-6", "금5-6"] },
+      { name: "생활과윤리", displayName: "생활과윤리", shortName: "생활과윤리", tinyName: "생윤", group: null, credits: 4, slots: ["화5-6", "금5-6"] },
+      { name: "생명과학2", displayName: "생명과학Ⅱ", shortName: "생명과학Ⅱ", tinyName: "생명Ⅱ", group: null, credits: 4, slots: ["화5-6", "금5-6"] },
+      { name: "철학", displayName: "철학", shortName: "철학", tinyName: "철학", group: null, credits: 4, slots: ["화5-6", "금5-6"] },
+      { name: "프로그래밍", displayName: "프로그래밍", shortName: "프로그래밍", tinyName: "프밍", group: null, credits: 4, slots: ["화5-6", "금5-6"] },
+    ]
+  },
+  {
+    id: "Set4",
+    label: "세트 4",
+    slots: ["화7-8", "목3-4"],
+    courses: [
+      { name: "스포츠생활A", displayName: "스포츠생활A", shortName: "스포츠생활", tinyName: "스포츠", group: "스포츠생활", credits: 1, slots: ["화7-8"] },
+      { name: "독서B", displayName: "독서B", shortName: "독서", tinyName: "독서", group: "독서", credits: 4, slots: ["화7-8", "목3-4"] },
+      { name: "확률과통계B", displayName: "확률과통계B", shortName: "확률과통계", tinyName: "확통", group: "확률과통계", credits: 4, slots: ["화7-8", "목3-4"] },
+      { name: "세계문제와미래사회", displayName: "세계문제와미래사회", shortName: "세계문제와미래사회", tinyName: "세미사", group: null, credits: 4, slots: ["화7-8", "목3-4"] },
+    ]
+  },
+  {
+    id: "Set5",
+    label: "세트 5",
+    slots: ["수3-4", "금3-4"],
+    courses: [
+      { name: "영어2A", displayName: "영어ⅡA", shortName: "영어Ⅱ", tinyName: "영어Ⅱ", group: "영어Ⅱ", credits: 4, slots: ["수3-4", "금3-4"] },
+      { name: "심화영어독해A", displayName: "심화영어독해A", shortName: "심화영어독해", tinyName: "심영독", group: "심화영어독해", credits: 4, slots: ["수3-4", "금3-4"] },
+      { name: "독서C", displayName: "독서C", shortName: "독서", tinyName: "독서", group: "독서", credits: 4, slots: ["수3-4", "금3-4"] },
+      { name: "미적분", displayName: "미적분", shortName: "미적분", tinyName: "미적분", group: null, credits: 4, slots: ["수3-4", "금3-4"] },
+      { name: "스포츠생활D", displayName: "스포츠생활D", shortName: "스포츠생활", tinyName: "스포츠", group: "스포츠생활", credits: 1, slots: ["금3-4"] },
+    ]
+  },
+  {
+    id: "Set6",
+    label: "세트 6",
+    slots: ["월3-4", "목5-6"],
+    courses: [
+      { name: "사회문화", displayName: "사회문화", shortName: "사회문화", tinyName: "사문", group: null, credits: 4, slots: ["월3-4", "목5-6"] },
+      { name: "철학원전읽기", displayName: "철학원전읽기", shortName: "철학원전읽기", tinyName: "철원읽", group: null, credits: 4, slots: ["월3-4", "목5-6"] },
+      { name: "영화사", displayName: "영화사", shortName: "영화사", tinyName: "영화사", group: null, credits: 4, slots: ["월3-4", "목5-6"] },
+      { name: "DB프로그래밍", displayName: "DB프로그래밍", shortName: "DB프로그래밍", tinyName: "DB프밍", group: null, credits: 4, slots: ["월3-4", "목5-6"] },
+      { name: "수학과제탐구", displayName: "수학과제탐구", shortName: "수학과제탐구", tinyName: "수과탐", group: null, credits: 4, slots: ["월3-4", "목5-6"] },
+    ]
+  },
+  {
+    id: "Set7",
+    label: "세트 7",
+    slots: ["월5-6", "목7-8"],
+    courses: [
+      { name: "사회문제탐구", displayName: "사회문제탐구", shortName: "사회문제탐구", tinyName: "사문탐", group: null, credits: 4, slots: ["월5-6", "목7-8"] },
+      { name: "비교문화", displayName: "비교문화", shortName: "비교문화", tinyName: "비교문화", group: null, credits: 4, slots: ["월5-6", "목7-8"] },
+      { name: "화학2", displayName: "화학Ⅱ", shortName: "화학Ⅱ", tinyName: "화학Ⅱ", group: null, credits: 4, slots: ["월5-6", "목7-8"] },
+      { name: "확률과통계C", displayName: "확률과통계C", shortName: "확률과통계", tinyName: "확통", group: "확률과통계", credits: 4, slots: ["월5-6", "목7-8"] },
+    ]
+  },
+  {
+    id: "Set8",
+    label: "세트 8",
+    slots: ["월7-8"],
+    courses: [
+      { name: "일본어1", displayName: "일본어Ⅰ", shortName: "일본어Ⅰ", tinyName: "일본어", group: null, credits: 4, slots: ["월7-8"] },
+      { name: "중국어1", displayName: "중국어Ⅰ", shortName: "중국어Ⅰ", tinyName: "중국어", group: null, credits: 4, slots: ["월7-8"] },
+      { name: "프랑스어1", displayName: "프랑스어Ⅰ", shortName: "프랑스어Ⅰ", tinyName: "프랑스어", group: null, credits: 4, slots: ["월7-8"] },
+      { name: "독일어1", displayName: "독일어Ⅰ", shortName: "독일어Ⅰ", tinyName: "독일어", group: null, credits: 4, slots: ["월7-8"] },
+      { name: "한문1", displayName: "한문Ⅰ", shortName: "한문Ⅰ", tinyName: "한문", group: null, credits: 4, slots: ["월7-8"] },
+      { name: "심화영어2", displayName: "심화영어Ⅱ", shortName: "심화영어Ⅱ", tinyName: "심영Ⅱ", group: null, credits: 4, slots: ["월7-8"] },
+    ]
+  },
+  {
+    id: "Set9",
+    label: "세트 9",
+    slots: ["금1-2"],
+    courses: [
+      { name: "리더쉽", displayName: "리더쉽", shortName: "리더쉽", tinyName: "리더쉽", group: null, credits: 4, slots: ["금1-2"] },
+      { name: "물리학2", displayName: "물리학Ⅱ", shortName: "물리학Ⅱ", tinyName: "물리Ⅱ", group: null, credits: 4, slots: ["금1-2"] },
+    ]
+  },
+];
+
+const FIXED_SCHEDULE = {
+  "월1-2": { name: "학급자치", tinyName: "학급자치", type: "fixed" },
+  "수5-6": { name: "다만day", tinyName: "다만day", type: "special" },
+  "수7-8": { name: "다만day", tinyName: "다만day", type: "special" },
+  "수9-10": { name: "연극과삶/영화와삶", tinyName: "연극/영화", type: "special" },
+  "금7-8": { name: "동아리", tinyName: "동아리", type: "fixed" },
+};
+
+function isMobile() {
+  return window.innerWidth <= 640;
+}
+
+function getCellName(cell) {
+  if (isMobile() && cell.tinyName) return cell.tinyName;
+  return cell.name;
+}
+
+const DAYS = ["월", "화", "수", "목", "금"];
+const PERIODS = ["1-2", "3-4", "5-6", "7-8", "9-10"];
+const MIN_CREDITS = 28;
+
+// ============================================================
+// STATE
+// ============================================================
+
+let selections = {}; // setId -> courseName
+let results = [];
+let currentResult = 0;
+
+// ============================================================
+// RENDERING
+// ============================================================
+
+function renderSetContainers() {
+  const container = document.getElementById('set-containers');
+  container.innerHTML = SETS.map(set => {
+    const slotsDisplay = set.slots.map(s => {
+      const day = s.charAt(0);
+      const dayName = {월:'월',화:'화',수:'수',목:'목',금:'금'}[day];
+      return dayName + ' ' + s.substring(1);
+    }).join(', ');
+
+    return `
+      <div class="set-group" id="group-${set.id}">
+        <div class="set-header">
+          <span>${set.label}</span>
+          <span class="time-info">${slotsDisplay}교시</span>
+        </div>
+        <div class="course-options">
+          ${set.courses.map(c => `
+            <div class="course-chip"
+                 data-set="${set.id}"
+                 data-course="${c.name}"
+                 data-group="${c.group || ''}"
+                 onclick="toggleCourse('${set.id}', '${c.name}')">
+              ${c.displayName}
+              <span class="credit-badge">${c.credits}학점</span>
+              <span class="blocked-reason"></span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Build a map of which groups are already selected (group -> { setId, courseName })
+function getSelectedGroups() {
+  const groupMap = {};
+  for (const [setId, courseName] of Object.entries(selections)) {
+    const set = SETS.find(s => s.id === setId);
+    const course = set.courses.find(c => c.name === courseName);
+    if (course && course.group) {
+      groupMap[course.group] = { setId, displayName: course.displayName };
+    }
+  }
+  return groupMap;
+}
+
+function updateUI() {
+  const selectedGroups = getSelectedGroups();
+
+  // Update chips
+  SETS.forEach(set => {
+    const selected = selections[set.id];
+    set.courses.forEach(course => {
+      const chip = document.querySelector(`[data-set="${set.id}"][data-course="${course.name}"]`);
+      if (!chip) return;
+      chip.classList.remove('selected', 'disabled', 'blocked');
+      const blockedReason = chip.querySelector('.blocked-reason');
+      if (blockedReason) blockedReason.textContent = '';
+
+      // Check if this course's group is already selected in ANOTHER set
+      const isBlockedByGroup = course.group
+        && selectedGroups[course.group]
+        && selectedGroups[course.group].setId !== set.id;
+
+      if (selected === course.name) {
+        chip.classList.add('selected');
+      } else if (isBlockedByGroup) {
+        chip.classList.add('blocked');
+        if (blockedReason) {
+          blockedReason.textContent = `(${selectedGroups[course.group].displayName} 선택됨)`;
+        }
+      } else if (selected) {
+        chip.classList.add('disabled');
+      }
+    });
+  });
+
+  // Update credits
+  const totalCredits = calcTotalCredits();
+  const creditCount = document.getElementById('credit-count');
+  const creditFill = document.getElementById('credit-fill');
+  const creditStatus = document.getElementById('credit-status');
+
+  creditCount.textContent = totalCredits;
+  const pct = Math.min(100, (totalCredits / MIN_CREDITS) * 100);
+  creditFill.style.width = pct + '%';
+
+  if (totalCredits >= MIN_CREDITS) {
+    creditFill.style.background = 'var(--success)';
+    creditStatus.textContent = `✅ ${MIN_CREDITS}학점 이상 충족!`;
+    creditStatus.style.color = 'var(--success)';
+  } else {
+    creditFill.style.background = 'var(--primary)';
+    creditStatus.textContent = `${MIN_CREDITS - totalCredits}학점 더 필요`;
+    creditStatus.style.color = 'var(--warning)';
+  }
+
+  // Update generate button
+  const btn = document.getElementById('generate-btn');
+  const selectedCount = Object.keys(selections).length;
+  if (selectedCount === 0) {
+    btn.disabled = true;
+    btn.textContent = '과목을 선택해 주세요';
+  } else if (totalCredits < MIN_CREDITS) {
+    btn.disabled = true;
+    btn.textContent = `학점이 부족해요 (${totalCredits}/${MIN_CREDITS})`;
+  } else {
+    btn.disabled = false;
+    btn.textContent = `🎓 시간표 만들기 (${totalCredits}학점)`;
+  }
+
+  // Alerts
+  updateAlerts();
+}
+
+function updateAlerts() {
+  const area = document.getElementById('alert-area');
+  const alerts = [];
+
+  // Check if sport is selected
+  const hasSport = Object.values(selections).some(name => name.startsWith('스포츠생활'));
+  if (hasSport) {
+    alerts.push({
+      type: 'warning',
+      icon: '⚡',
+      text: '스포츠생활(1학점)은 세트의 일부 시간만 사용합니다. 나머지 시간대에 공강이 발생해요.'
+    });
+  }
+
+  area.innerHTML = alerts.map(a => `
+    <div class="alert alert-${a.type}">
+      <span class="alert-icon">${a.icon}</span>
+      <span>${a.text}</span>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// LOGIC
+// ============================================================
+
+function toggleCourse(setId, courseName) {
+  // If already selected, toggle off
+  if (selections[setId] === courseName) {
+    delete selections[setId];
+    updateUI();
+    return;
+  }
+
+  // Check if this course's group is already selected in another set
+  const set = SETS.find(s => s.id === setId);
+  const course = set.courses.find(c => c.name === courseName);
+  if (course && course.group) {
+    const selectedGroups = getSelectedGroups();
+    if (selectedGroups[course.group] && selectedGroups[course.group].setId !== setId) {
+      // Blocked! Don't allow selection
+      return;
+    }
+  }
+
+  selections[setId] = courseName;
+  updateUI();
+}
+
+function calcTotalCredits() {
+  let total = 0;
+  for (const [setId, courseName] of Object.entries(selections)) {
+    const set = SETS.find(s => s.id === setId);
+    const course = set.courses.find(c => c.name === courseName);
+    if (course) total += course.credits;
+  }
+  return total;
+}
+
+function resetAll() {
+  selections = {};
+  updateUI();
+}
+
+// ============================================================
+// TIMETABLE GENERATION
+// ============================================================
+
+function generateTimetables() {
+  // Build timetable from selections
+  const schedule = {};
+
+  // Fixed items
+  for (const [slot, info] of Object.entries(FIXED_SCHEDULE)) {
+    schedule[slot] = { ...info };
+  }
+
+  // Selected courses
+  const freeSlots = [];
+  for (const [setId, courseName] of Object.entries(selections)) {
+    const set = SETS.find(s => s.id === setId);
+    const course = set.courses.find(c => c.name === courseName);
+
+    // Place course in its slots
+    course.slots.forEach(slot => {
+      schedule[slot] = {
+        name: course.shortName,
+        tinyName: course.tinyName,
+        fullName: course.displayName,
+        type: course.credits === 1 ? 'sport' : 'selected',
+        credits: course.credits,
+      };
+    });
+
+    // If 1-credit course, find missing slots
+    if (course.credits === 1) {
+      set.slots.forEach(slot => {
+        if (!course.slots.includes(slot)) {
+          schedule[slot] = { name: '공강 (자습)', tinyName: '공강', type: 'free' };
+          freeSlots.push(slot);
+        }
+      });
+    }
+  }
+
+  results = [{ schedule, freeSlots, credits: calcTotalCredits(), selections: { ...selections } }];
+  currentResult = 0;
+
+  showResults();
+}
+
+function showResults() {
+  document.getElementById('selection-panel').style.display = 'none';
+  document.getElementById('result-panel').style.display = 'block';
+
+  // Update steps
+  document.getElementById('step1').className = 'step done';
+  document.getElementById('step2').className = 'step done';
+  document.getElementById('step3').className = 'step active';
+
+  renderResult(0);
+}
+
+function backToSelection() {
+  document.getElementById('selection-panel').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+
+  document.getElementById('step1').className = 'step active';
+  document.getElementById('step2').className = 'step';
+  document.getElementById('step3').className = 'step';
+}
+
+function renderResult(index) {
+  const result = results[index];
+  const { schedule, freeSlots, credits } = result;
+
+  // Alert
+  const alertArea = document.getElementById('result-alert-area');
+  alertArea.innerHTML = `
+    <div class="alert alert-success">
+      <span class="alert-icon">🎉</span>
+      <span>시간표가 완성되었어요! 총 <strong>${credits}학점</strong>입니다.</span>
+    </div>
+  `;
+
+  // Tags
+  const tagsArea = document.getElementById('result-tags');
+  const tags = [];
+  for (const [setId, courseName] of Object.entries(result.selections)) {
+    const set = SETS.find(s => s.id === setId);
+    const course = set.courses.find(c => c.name === courseName);
+    tags.push(`<span class="result-tag tag-course">${course.displayName} (${course.credits}학점)</span>`);
+  }
+  if (freeSlots.length > 0) {
+    freeSlots.forEach(slot => {
+      const day = {월:'월',화:'화',수:'수',목:'목',금:'금'}[slot.charAt(0)];
+      tags.push(`<span class="result-tag tag-free">공강: ${day} ${slot.substring(1)}교시</span>`);
+    });
+  }
+  tags.push(`<span class="result-tag tag-credit">합계 ${credits}학점</span>`);
+  tagsArea.innerHTML = `<div class="result-detail">${tags.join('')}</div>`;
+
+  // Timetable
+  const display = document.getElementById('timetable-display');
+  let html = '<table class="timetable"><thead><tr><th>교시</th>';
+  DAYS.forEach(d => { html += `<th>${d}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  PERIODS.forEach(period => {
+    // Skip 9-10 for days other than 수
+    if (period === '9-10') {
+      html += '<tr>';
+      html += `<td class="period-cell">${period}</td>`;
+      DAYS.forEach(day => {
+        const key = day + period;
+        const cell = schedule[key];
+        if (cell) {
+          const cls = cell.type === 'special' ? 'cell-special' : 'cell-fixed';
+          html += `<td class="${cls}">${getCellName(cell)}</td>`;
+        } else {
+          html += '<td style="color:var(--gray-300)">—</td>';
+        }
+      });
+      html += '</tr>';
+      return;
+    }
+
+    if (period === '5-6') {
+      html += '<tr class="lunch-row">';
+      html += '<td>점심</td>';
+      DAYS.forEach(() => { html += '<td>🍱</td>'; });
+      html += '</tr>';
+    }
+
+    html += '<tr>';
+    html += `<td class="period-cell">${period}</td>`;
+
+    DAYS.forEach(day => {
+      const key = day + period;
+      const cell = schedule[key];
+
+      if (cell) {
+        let cls = '';
+        switch (cell.type) {
+          case 'selected': cls = 'cell-selected'; break;
+          case 'sport': cls = 'cell-sport'; break;
+          case 'free': cls = 'cell-free'; break;
+          case 'special': cls = 'cell-special'; break;
+          case 'fixed': cls = 'cell-fixed'; break;
+          default: cls = '';
+        }
+        html += `<td class="${cls}">${getCellName(cell)}</td>`;
+      } else {
+        html += '<td class="cell-free">공강</td>';
+      }
+    });
+
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  display.innerHTML = html;
+
+  // Nav
+  const nav = document.getElementById('result-nav');
+  nav.innerHTML = '';
+}
+
+// ============================================================
+// SAVE AS IMAGE
+// ============================================================
+
+function saveAsImage() {
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.textContent = '저장 중...';
+
+  const target = document.querySelector('.timetable-container');
+  html2canvas(target, {
+    scale: 2,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = '이우학교_고3_시간표.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.disabled = false;
+    btn.textContent = '📷 시간표 이미지로 저장';
+  }).catch(() => {
+    alert('이미지 저장에 실패했어요. 다시 시도해 주세요.');
+    btn.disabled = false;
+    btn.textContent = '📷 시간표 이미지로 저장';
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+
+renderSetContainers();
+updateUI();
+</script>
+
+</body>
+</html>
