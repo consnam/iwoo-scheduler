@@ -842,9 +842,6 @@ function updateUI() {
         chip.classList.add('selected');
       } else if (isBlockedByGroup) {
         chip.classList.add('blocked');
-        if (blockedReason) {
-          blockedReason.textContent = `(${selectedGroups[course.group].displayName} 선택됨)`;
-        }
       } else if (selected) {
         chip.classList.add('disabled');
       }
