@@ -550,6 +550,41 @@
   }
   .save-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(5,150,105,0.4); }
   .save-btn:disabled { background: var(--gray-300); cursor: wait; box-shadow: none; }
+
+  .name-input-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .name-input-area label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-700);
+    white-space: nowrap;
+  }
+  .name-input-area input {
+    flex: 1;
+    max-width: 200px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .name-input-area input:focus {
+    border-color: var(--primary-light);
+  }
+  .timetable-owner {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-700);
+    margin-bottom: 8px;
+  }
 </style>
 </head>
 <body>
@@ -571,6 +606,11 @@
       <div class="header-actions">
         <div class="card-title"><span class="icon">🎯</span> 듣고 싶은 과목을 선택하세요</div>
         <button class="reset-btn" onclick="resetAll()">초기화</button>
+      </div>
+
+      <div class="name-input-area">
+        <label for="student-name">이름</label>
+        <input type="text" id="student-name" placeholder="선택 사항" maxlength="10">
       </div>
 
       <div class="credit-bar">
@@ -1200,7 +1240,12 @@ function renderResult(index) {
 
   // Timetable
   const display = document.getElementById('timetable-display');
-  let html = '<table class="timetable"><thead><tr><th>교시</th>';
+  const studentName = document.getElementById('student-name').value.trim();
+  let html = '';
+  if (studentName) {
+    html += `<div class="timetable-owner">${studentName}의 시간표</div>`;
+  }
+  html += '<table class="timetable"><thead><tr><th>교시</th>';
   DAYS.forEach(d => { html += `<th>${d}</th>`; });
   html += '</tr></thead><tbody>';
 
@@ -1307,6 +1352,9 @@ function saveAsImage() {
 renderSetContainers();
 updateUI();
 </script>
+
+<script data-goatcounter="https://consnam.goatcounter.com/count"
+        async src="https://gc.zgo.at/count.js"></script>
 
 </body>
 </html>
